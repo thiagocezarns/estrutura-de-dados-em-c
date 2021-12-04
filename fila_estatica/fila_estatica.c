@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include "fila_estatica.h"
 
@@ -32,13 +31,25 @@ void liberar_fila(Fila *fi) {
 int inserir_fila(Fila *fi, struct aluno al) {
     if(fi == NULL)
         return 0;
-    if(fi->tamnho >= MAX)
+    if(fi->tamanho >= MAX)
         return 0;
     fi->nos[fi->tamanho].dados = al;
     fi->tamanho++;
     return 0;
 }
 
+int remover_fila(Fila *fi) {
+    if(fi == NULL)
+        return 0;
+    if(fi->tamanho == 0)
+        return 0;
+
+    for(int i=0; i<(fi->tamanho-1); i++)
+        fi->nos[i] = fi->nos[i+1];
+
+    fi->tamanho--;
+    return 1;
+}
 
 int consultar_fila(Fila *fi, struct aluno *al) {
     if(fi == NULL)
@@ -46,9 +57,36 @@ int consultar_fila(Fila *fi, struct aluno *al) {
     if(fi->tamanho == 0)
         return 0;
 
-    *al = fi->nos[inicio];
+    *al = fi->nos[fi->inicio].dados;
 
     return 1;
+}
+
+int tamanho_fila(Fila *fi) {
+    if(fi == NULL)
+        return 0;
+
+    return fi->tamanho;
+}
+
+int fila_vazia(Fila *fi) {
+    if(fi == NULL)
+        return 0;
+
+    if(fi->tamanho > 0)
+        return 0;
+    else
+        return 1;
+}
+
+int fila_cheia(Fila *fi) {
+    if(fi == NULL)
+        return 0;
+
+    if(fi->tamanho == MAX)
+        return 1;
+    else
+        return 0;
 }
 
 int imprimir_fila(Fila *fi) {
@@ -58,9 +96,9 @@ int imprimir_fila(Fila *fi) {
         printf("\n------------------------------");
         printf("\nNome: %s", fi->nos[i].dados.nome);
         printf("\nMatricula: %d", fi->nos[i].dados.matricula);
-        printf("\nNota 1: %d", fi->nos[i].dados.n1);
-        printf("\nNota 2: %d", fi->nos[i].dados.n2);
-        printf("\nNota 3: %d", fi->nos[i].dados.n3);
+        printf("\nNota 1: %.2f", fi->nos[i].dados.n1);
+        printf("\nNota 2: %.2f", fi->nos[i].dados.n2);
+        printf("\nNota 3: %.2f", fi->nos[i].dados.n3);
         printf("\n------------------------------\n");
     }
     return 1;

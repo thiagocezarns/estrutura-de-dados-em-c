@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define MAX 50
 
@@ -19,4 +20,4 @@ int consultar_fila(Fila* fi, struct aluno *al);
 int tamanho_fila(Fila* fi);
 int fila_vazia(Fila* fi);
 int fila_cheia(Fila* fi);
-int imprimir_fila(Fila *fi);
+int imprimir_fila(Fila* fi);
