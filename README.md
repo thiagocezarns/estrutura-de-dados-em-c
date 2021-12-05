@@ -1,9 +1,9 @@
 # Estrutura de Dados em C
 
-# Visão Geral
+## Visão Geral
 Implementação de algumas estruturas de dados utilizando a linguagem C.
 
-# Estruturas de dados
+## Estruturas de dados
 - Lista encadeada simples
 - Lista duplamente encadeada
 - Lista com nó descritor
