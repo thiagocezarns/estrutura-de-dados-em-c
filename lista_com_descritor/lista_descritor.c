@@ -91,8 +91,6 @@ int remover_lista_inicio(Lista *li){
     return 1;
 }
 
-// IMPLEMENTAÇOES
-
 int lista_vazia(Lista *li) {
     if(li == NULL)
         return 0;

@@ -28,8 +28,8 @@ int main(){
     inserir_lista_ordenada(minha_lista,al);
 
     //remover_lista(minha_lista, 2);
-    //imprimir_lista(minha_lista);
 
+    imprimir_lista(minha_lista);
     printf("\nTamanho lista: %d\n", tamanho_lista(minha_lista));
 
     liberar_lista(minha_lista);
