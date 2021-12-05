@@ -1,80 +1,193 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "lista_dinamica.h"
 
-struct no {
-    Aluno al;
-    struct no *prox_no;
+struct no{
+    struct aluno dados;
+    struct no *prox;
 };
 
-struct lista {
-    int tamanho;
-    No *prox_no;
-};
+typedef struct no No;
 
-Lista* criar_lista() {
-    Lista *lista = (Lista *) calloc(1, sizeof(Lista));
-    lista->prox_no = NULL;
-    return lista;
+Lista* criar_lista(){
+    Lista * li = (Lista*) malloc (sizeof(Lista));
+    if (li != NULL)
+        *li = NULL;
+    return li;
 }
 
-No* criar_no(Aluno al) {
-    No *no = (No *) calloc(1, sizeof(No));
-    no->al = al;
-    no->prox_no = NULL;
-    return no;
-}
-
-void inserir_lista_final(Lista *li, Aluno al) {
-    if(li->prox_no == NULL) {
-        No *novo_no = criar_no(al);
-        li->prox_no = novo_no;
-    } else {
-        No *no = li->prox_no;
-        No *ultimo_no = li->prox_no;
-        while(no != NULL) {
-          if(no->prox_no == NULL)
-          ultimo_no = no;
-          no = no->prox_no;
+void liberar_lista(Lista* li){
+    if (li != NULL){
+        No* no;
+        while((*li) != NULL){
+            no = *li;
+            *li = (*li)->prox;
+            free(no);
         }
-        No *novo_no = criar_no(al);
-        ultimo_no->prox_no = novo_no;
+        free(li);
     }
-    li->tamanho++;
 }
 
-void inserir_lista_ordenada(Lista *li, Aluno al) {
-    if(li->prox_no == NULL) {
-        No *novo_no = criar_no(al);
-        li->prox_no = novo_no;
+int tamanho_lista(Lista *li){
+    if (li == NULL)
+        return 0;
+    int cont = 0;
+    No* no = *li;
+    while(no != NULL){
+        cont++;
+        no = no->prox;
+    }
+    return cont;
+}
+
+int lista_vazia(Lista* li){
+    if (li == NULL)
+        return 1;
+    if (*li == NULL)
+        return 1;
+    return 0;
+}
+
+int inserir_lista_inicio(Lista *li, struct aluno al){
+    if (li == NULL)
+        return 0;
+    No* novo_no;
+    novo_no = (No*) malloc(sizeof(No));
+    if (novo_no == NULL)
+        return 0;
+    novo_no->dados = al;
+    novo_no->prox = (*li);
+    *li = novo_no;
+    return 1;
+}
+
+int inserir_lista_final(Lista *li, struct aluno al){
+    if (li == NULL)
+        return 0;
+    No *novo_no;
+    novo_no = (No*) malloc(sizeof(No));
+    if (novo_no == NULL)
+        return 0;
+    novo_no->dados = al;
+    novo_no->prox = NULL;
+    if((*li) == NULL){
+        *li = novo_no;
     } else {
-        No *no = li->prox_no;
-        No *no_anterior = li->prox_no;
-        while(al.matricula > no->al.matricula) {
-            if(no->prox_no == NULL)
-                break;
-            no_anterior = no;
-            no = no->prox_no;
-        }
-        No *novo_no = criar_no(al);
-        no_anterior->prox_no = novo_no;
-        novo_no->prox_no = no;
-    } 
+        No *aux;
+        aux = *li;
+        while(aux->prox != NULL)
+            aux = aux->prox;
+        aux->prox = novo_no;
+    }
+    return 1;
 }
 
+int inserir_lista_ordenada(Lista* li, struct aluno al){
+    if (li == NULL)
+        return 0;
+    No* novo_no;
+    novo_no = (No*) malloc(sizeof(No));
+    if (novo_no == NULL)
+        return 0;
+    novo_no->dados = al;
+    if((*li) == NULL){
+        novo_no->prox = NULL;
+        *li = novo_no;
+        return 1;
+    } else{
+        No *ant, *atual = *li;
+        while (atual != NULL && atual->dados.matricula < al.matricula){
+            ant = atual;
+            atual = atual->prox;
+        }
+        if(atual == *li){
+            novo_no->prox = (*li);
+            *li = novo_no;
+        } else {
+            novo_no->prox = atual;
+            ant->prox = novo_no;
+        }
+        return 1;
+    }
+}
 
+int remover_lista_inicio(Lista* li){
+    if (li == NULL)
+        return 0;
+    if ((*li) == NULL)
+        return 0;
+
+    No *no = *li;
+    *li = no->prox;
+    free(no);
+    return 1;
+}
+
+int remover_lista_final(Lista* li){
+    if (li == NULL)
+        return 0;
+    if ((*li) == NULL)
+        return 0;
+
+    No *ant, *no = *li;
+    while(no->prox != NULL){
+        ant = no;
+        no = no->prox;
+    }
+
+    if(no == (*li))
+        *li = no->prox;
+    else
+        ant->prox = no->prox;
+    free(no);
+    return 1;
+}
+
+int remover_lista(Lista* li, int mat){
+    if (li == NULL)
+        return 0;
+    if ((*li) == NULL)
+        return 0;
+
+    No *ant, *no = *li;
+    while(no != NULL && no->dados.matricula != mat){
+        ant = no;
+        no = no->prox;
+    }
+    if (no == NULL)
+        return 0;
+
+    if (no == *li)
+        *li = no->prox;
+    else
+        ant->prox = no->prox;
+    free(no);
+    return 1;
+}
+
+int busca_lista_mat(Lista* li, int mat, struct aluno *al){
+    if (li == NULL)
+        return 0;
+    No *no = *li;
+    while(no != NULL && no->dados.matricula != mat)
+        no = no->prox;
+    if (no == NULL)
+        return 0;
+    else{
+        *al = no->dados;
+        return 1;
+    }
+}
 
 void imprimir_lista(Lista *li) {
-    No *no = li->prox_no;
+    No *no = (*li);
     while(no != NULL) {
-        printf("Aluno: %s\n", no->al.nome);
-        printf("Matricula: %d\n", no->al.matricula);
-        printf("Nota 1: %.1f\n", no->al.nota1);
-        printf("Nota 2: %.1f\n", no->al.nota2);
-        printf("Nota 3: %.1f\n\n", no->al.nota3);
-        no = no->prox_no;
+        printf("Aluno: %s\n", no->dados.nome);
+        printf("Matricula: %d\n", no->dados.matricula);
+        printf("Nota 1: %.1f\n", no->dados.n1);
+        printf("Nota 2: %.1f\n", no->dados.n2);
+        printf("Nota 3: %.1f\n\n", no->dados.n3);
+        no = no->prox;
     }
 }
 
-void tamanho_lista(Lista *li) {
-    printf("\nTamanho da lista: %d\n", li->tamanho);
-}
